@@ -39,6 +39,7 @@ class TestAnnotationContext(object):
         actual = res.__acl__()
         expect = [(security.Allow, 'saoirse', 'read'),
                   (security.Allow, 'saoirse', 'flag'),
+                  (security.Allow, 'saoirse', 'moderate'),
                   (security.Allow, 'saoirse', 'admin'),
                   (security.Allow, 'saoirse', 'update'),
                   (security.Allow, 'saoirse', 'delete'),
@@ -55,7 +56,7 @@ class TestAnnotationContext(object):
         ann = factories.Annotation(shared=False, userid='saoirse')
         res = AnnotationContext(ann, group_service, links_service)
 
-        for perm in ['admin', 'update', 'delete']:
+        for perm in ['admin', 'update', 'delete', 'moderate']:
             assert policy.permits(res, ['saoirse'], perm)
             assert not policy.permits(res, ['someoneelse'], perm)
 
@@ -69,7 +70,7 @@ class TestAnnotationContext(object):
         ann = factories.Annotation(userid='saoirse', deleted=True)
         res = AnnotationContext(ann, group_service, links_service)
 
-        for perm in ['read', 'admin', 'update', 'delete']:
+        for perm in ['read', 'admin', 'update', 'delete', 'moderate']:
             assert not policy.permits(res, ['saiorse'], perm)
 
     @pytest.mark.parametrize('groupid,userid,permitted', [
