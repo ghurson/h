@@ -6,6 +6,7 @@ import mock
 import pytest
 
 from pyramid.httpexceptions import HTTPNoContent
+from pyramid.httpexceptions import HTTPNoContent, HTTPMethodNotAllowed
 
 from h.views.api import moderation as views
 
@@ -29,6 +30,12 @@ class TestCreate(object):
     def test_it_renders_no_content(self, pyramid_request, resource):
         response = views.create(resource, pyramid_request)
         assert isinstance(response, HTTPNoContent)
+
+    def test_it_raises_method_not_allowed_if_resource_not_shared(self, pyramid_request, resource):
+        resource.annotation.shared = False
+
+        with pytest.raises(HTTPMethodNotAllowed, match='Private annotations cannot be moderated'):
+            views.create(resource, pyramid_request)
 
 
 @pytest.mark.usefixtures('moderation_service')
