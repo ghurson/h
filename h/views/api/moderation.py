@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from pyramid.httpexceptions import HTTPNoContent
+from pyramid.httpexceptions import HTTPNoContent, HTTPMethodNotAllowed
 
 from h import events
 from h.views.api.config import api_config
@@ -14,6 +14,9 @@ from h.views.api.config import api_config
             description='Hide an annotation as a group moderator.',
             permission='moderate')
 def create(context, request):
+
+    if not context.annotation.shared:
+        raise HTTPMethodNotAllowed('Private annotations cannot be moderated')
 
     svc = request.find_service(name='annotation_moderation')
     svc.hide(context.annotation)
@@ -30,6 +33,9 @@ def create(context, request):
             description='Unhide an annotation as a group moderator.',
             permission='moderate')
 def delete(context, request):
+
+    if not context.annotation.shared:
+        raise HTTPMethodNotAllowed('Private annotations cannot be moderated')
 
     svc = request.find_service(name='annotation_moderation')
     svc.unhide(context.annotation)
