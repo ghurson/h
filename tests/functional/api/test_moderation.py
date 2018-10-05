@@ -85,6 +85,7 @@ class TestPutHide(object):
         # However, moderating a private annotation is nonsensical, so the
         # view will raise an HTTP 405
         assert res.status_code == 405
+        assert res.json['reason'] == 'Private annotations cannot be moderated'
 
 
 @pytest.mark.functional
@@ -154,6 +155,7 @@ class TestDeleteHide(object):
         # However, moderating a private annotation is nonsensical, so the
         # view will raise an HTTP 405
         assert res.status_code == 405
+        assert res.json['reason'] == 'Private annotations cannot be moderated'
 
 
 @pytest.fixture

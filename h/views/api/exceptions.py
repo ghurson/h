@@ -11,6 +11,7 @@ from __future__ import unicode_literals
 
 from pyramid.view import forbidden_view_config
 from pyramid.view import notfound_view_config
+from pyramid.httpexceptions import HTTPMethodNotAllowed
 
 from h.i18n import TranslationString as _  # noqa: N813
 from h.exceptions import APIError
@@ -44,6 +45,12 @@ def api_error(context, request):
 @json_view(context=ValidationError, path_info='/api/', decorator=cors_policy)
 def api_validation_error(context, request):
     request.response.status_code = 400
+    return {'status': 'failure', 'reason': str(context)}
+
+
+@json_view(context=HTTPMethodNotAllowed, path_info='/api/', decorator=cors_policy)
+def api_method_not_allowed_error(context, request):
+    request.response.status_code = 405
     return {'status': 'failure', 'reason': str(context)}
 
 

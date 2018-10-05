@@ -2,6 +2,8 @@
 
 from __future__ import unicode_literals
 
+from pyramid.httpexceptions import HTTPMethodNotAllowed
+
 from h.exceptions import APIError
 from h.schemas import ValidationError
 from h.views.api import exceptions as views
@@ -33,6 +35,16 @@ def test_api_validation_error(pyramid_request):
     assert pyramid_request.response.status_code == 400
     assert result['status'] == 'failure'
     assert result['reason'] == 'missing required userid'
+
+
+def test_api_method_not_allowed_error(pyramid_request):
+    context = HTTPMethodNotAllowed('some problem')
+
+    result = views.api_method_not_allowed_error(context, pyramid_request)
+
+    assert pyramid_request.response.status_code == 405
+    assert result['status'] == 'failure'
+    assert result['reason'] == 'some problem'
 
 
 def test_json_error_view(patch, pyramid_request):
